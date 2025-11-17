@@ -12,12 +12,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Contador',
       theme: ThemeData(
         
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Contador'),
     );
   }
 }
@@ -39,6 +39,15 @@ class _MyHomePageState extends State<MyHomePage> {
   bool pressPlus = false;
   bool pressTurbo = false;
   bool pressReset = false;
+
+  Color bgColor = Colors.amber;
+
+  void _changeBackgroundColor() {
+    setState(() {
+      bgColor =
+          (bgColor == Colors.amber) ? Colors.deepOrangeAccent : Colors.amber;
+    });
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -85,8 +94,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: bgColor,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
       body: Center(
@@ -104,6 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           GestureDetector(
             onLongPressStart: (_) {
@@ -165,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
               _stopAuto();
               setState(() => pressTurbo = false); },
             child: FloatingActionButton(
-              heroTag: 'incrementHold',
+              heroTag: 'incrementTurbo',
               tooltip: 'Turbo (segure)',
               backgroundColor:
                           pressTurbo ? Colors.grey.shade300 : Colors.blue,
@@ -180,6 +190,14 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundColor: Colors.blue,
             child: const Icon(Icons.restart_alt),
           ),
+          const SizedBox(width: 16),
+          FloatingActionButton(
+            heroTag: 'changeBg',
+            onPressed: _changeBackgroundColor,
+            backgroundColor: Colors.blue,
+            tooltip: 'Mudar fundo',
+            child: const Icon(Icons.color_lens),
+          )
         ],
       ),
     );
