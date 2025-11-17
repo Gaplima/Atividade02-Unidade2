@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -55,6 +57,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  Timer? _holdTimer;
 
   void _incrementCounter() {
     setState(() {
@@ -64,6 +67,42 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+    }); 
+  }
+
+  void _decrementCounter() {
+    setState(() {
+      if (_counter > 0){
+        _counter--;
+      }
+    }); 
+  }
+
+  void _startAutoIncrement() {
+    _holdTimer?.cancel();
+    _holdTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+    _incrementCounter();
+    });
+  }
+  void _startAutoDecrement() {
+    _holdTimer?.cancel();
+    _holdTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+    _decrementCounter();
+    });
+  }
+  void _startTurboIncrement() {
+    _holdTimer?.cancel();
+    _holdTimer = Timer.periodic(const Duration(milliseconds: 2), (timer) {
+    _incrementCounter();
+    });
+  }
+  void _stopAuto() {
+    _holdTimer?.cancel();
+  }
+
+  void _resetCounter() {
+    setState(() {
+      _counter = 0;
     });
   }
 
@@ -104,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: .center,
           children: [
-            const Text('You have pushed the button this many times:'),
+            const Text('O valor atual do contador eh:'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
@@ -112,10 +151,54 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onLongPressStart: (_) => _startAutoIncrement(),
+            onLongPressEnd: (_) => _stopAuto(),
+            onTapUp: (_) => _stopAuto(),
+            onTapCancel: () => _stopAuto(),
+            child: FloatingActionButton(
+              heroTag: 'incrementHold',
+              tooltip: 'Incrementar (segure)',
+              onPressed: _incrementCounter,
+              child: const Icon(Icons.add),
+            ),
+          ),
+          const SizedBox(width: 16),
+          GestureDetector(
+            onLongPressStart: (_) => _startAutoDecrement(),
+            onLongPressEnd: (_) => _stopAuto(),
+            onTapUp: (_) => _stopAuto(),
+            onTapCancel: () => _stopAuto(),
+            child: FloatingActionButton(
+              heroTag: 'decrementHold',
+              tooltip: 'Diminuir (segure)',
+              onPressed: _decrementCounter,
+              child: const Icon(Icons.remove),
+            ),
+          ),
+          const SizedBox(width: 16),
+          GestureDetector(
+            onLongPressStart: (_) => _startTurboIncrement(),
+            onLongPressEnd: (_) => _stopAuto(),
+            onTapUp: (_) => _stopAuto(),
+            onTapCancel: () => _stopAuto(),
+            child: FloatingActionButton(
+              heroTag: 'incrementHold',
+              tooltip: 'Turbo (segure)',
+              onPressed: _incrementCounter,
+              child: const Icon(Icons.speed),
+            ),
+          ),
+          const SizedBox(width: 16),
+          FloatingActionButton(
+            heroTag: 'reset',
+            onPressed: _resetCounter,
+            child: const Icon(Icons.restart_alt),
+          ),
+        ],
       ),
     );
   }
